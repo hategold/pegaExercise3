@@ -1,7 +1,11 @@
 package yt.item3;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.EnumMap;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -46,6 +50,8 @@ public class ShoesDBController extends HttpServlet {
 
 	private String excuteAction(String action, HttpServletRequest request) {
 
+		Map<CountryCode, String> countryCodeMap = buildCountryMap();
+
 		try {
 			if (ActionEnum.DELETE.name().equalsIgnoreCase(action)) {
 
@@ -59,11 +65,12 @@ public class ShoesDBController extends HttpServlet {
 					return dispatchToList(request);
 
 				request.setAttribute("brand", brand);
+				request.setAttribute("countryCodeMap", countryCodeMap);
 				return INSERT_OR_EDIT;
 			}
 
 			if (ActionEnum.INSERT.name().equalsIgnoreCase(action)) {
-
+				request.setAttribute("countryCodeMap", countryCodeMap);
 				return INSERT_OR_EDIT;
 			}
 		} catch (SQLException e) {
@@ -72,6 +79,31 @@ public class ShoesDBController extends HttpServlet {
 		}
 		return dispatchToList(request);
 
+	}
+
+	private Map<CountryCode, String> buildCountryMap() {
+		Map<CountryCode, String> countryCodeMap = new EnumMap<CountryCode, String>(CountryCode.class);
+		BufferedReader countryCodeReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("/countryCodeToFullName")));
+
+		if (countryCodeReader != null) {
+			try {
+				String line = "";
+				while ((line = countryCodeReader.readLine()) != null) {
+					int cammaIndex = line.indexOf(",");
+					String countryCodeString = line.substring(0, cammaIndex).trim();
+					String countryName = line.substring(cammaIndex + 1).replace("\"", "").trim();
+					try {
+						countryCodeMap.put(CountryCode.valueOf(countryCodeString), countryName);
+					} catch (IllegalArgumentException e) {
+						continue;
+					}
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return countryCodeMap;
 	}
 
 	private boolean isCreate(String id) {
