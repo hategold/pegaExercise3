@@ -121,13 +121,13 @@ public class ShoesDBController extends HttpServlet {
 
 		try {
 			if (isCreate(request.getParameter("brandId"))) {
-				brand.setCountry(request.getParameter("brandName")).setWebsite(request.getParameter("website"));
+				brand.setCountry(request.getParameter("country")).setWebsite(request.getParameter("website"));
 				brandDao.insertBrand(brand);
 				response.sendRedirect("/webExercise3/ShoesDBController?action=list"); //end post
 				return;
 			}
 
-			brand.setBrandId(Integer.valueOf(request.getParameter("brandId"))).setCountry(request.getParameter("brandName"))
+			brand.setBrandId(Integer.valueOf(request.getParameter("brandId"))).setCountry(request.getParameter("country"))
 					.setWebsite(request.getParameter("website"));
 			brandDao.updateBrand(brand);
 			response.sendRedirect("/webExercise3/ShoesDBController?action=list");

@@ -40,7 +40,7 @@
 								value="${brand.getWebsite()}" class="form-control">
 						</div>
 						<div class="form-group">
-							<label>Country</label><select class="form-control">
+							<label>Country</label><select class="form-control" name="country">
 								<c:forEach items="${countryCodeMap}" var="countryCode">
 									<option value=${countryCode.key}>${countryCode.value}</option>
 								</c:forEach>
