@@ -7,7 +7,7 @@ import yt.item3.Brand;
 
 public interface BrandDao {
 
-	public boolean selectBrandByID(Brand brand) throws SQLException;
+	public Brand selectBrandByID(int brandId) throws SQLException;
 
 	public boolean deleteBrand(int brandId) throws SQLException;
 

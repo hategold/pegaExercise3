@@ -28,6 +28,8 @@ public class ShoesDBController extends HttpServlet {
 
 	public static final String INSERT_OR_EDIT = "/modifyBrand.jsp";
 
+	public static final String COUNTRY_CODE_FILE = "/countryCodeToFullName";
+
 	public static enum ActionEnum {
 		INSERT, EDIT, DELETE, LIST
 	};
@@ -48,9 +50,12 @@ public class ShoesDBController extends HttpServlet {
 		return LIST_BRANDS;
 	}
 
-	private String excuteAction(String action, HttpServletRequest request) {
+	private String dispatchToUpdate(HttpServletRequest request) {
+		request.setAttribute("countryCodeMap", buildCountryMap());
+		return INSERT_OR_EDIT;
+	}
 
-		Map<CountryCode, String> countryCodeMap = buildCountryMap();
+	private String excuteAction(String action, HttpServletRequest request) {
 
 		try {
 			if (ActionEnum.DELETE.name().equalsIgnoreCase(action)) {
@@ -59,19 +64,15 @@ public class ShoesDBController extends HttpServlet {
 				return dispatchToList(request);
 			}
 			if (ActionEnum.EDIT.name().equalsIgnoreCase(action)) {
-
-				Brand brand = new Brand(Integer.parseInt(request.getParameter("brandId")));
-				if (!brandDao.selectBrandByID(brand)) //got no data
+				Brand brand = brandDao.selectBrandByID(Integer.valueOf(request.getParameter("brandId")));
+				if (brand == null) //got no data
 					return dispatchToList(request);
-
 				request.setAttribute("brand", brand);
-				request.setAttribute("countryCodeMap", countryCodeMap);
-				return INSERT_OR_EDIT;
+				return dispatchToUpdate(request);
 			}
 
 			if (ActionEnum.INSERT.name().equalsIgnoreCase(action)) {
-				request.setAttribute("countryCodeMap", countryCodeMap);
-				return INSERT_OR_EDIT;
+				return dispatchToUpdate(request);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -81,27 +82,24 @@ public class ShoesDBController extends HttpServlet {
 
 	}
 
-	private Map<CountryCode, String> buildCountryMap() {
+	private Map<CountryCode, String> buildCountryMap() {//TODO check
 		Map<CountryCode, String> countryCodeMap = new EnumMap<CountryCode, String>(CountryCode.class);
-		BufferedReader countryCodeReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("/countryCodeToFullName")));
+		BufferedReader countryCodeReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream(COUNTRY_CODE_FILE)));
 
-		if (countryCodeReader != null) {
-			try {
-				String line = "";
-				while ((line = countryCodeReader.readLine()) != null) {
-					int cammaIndex = line.indexOf(",");
-					String countryCodeString = line.substring(0, cammaIndex).trim();
-					String countryName = line.substring(cammaIndex + 1).replace("\"", "").trim();
-					try {
-						countryCodeMap.put(CountryCode.valueOf(countryCodeString), countryName);
-					} catch (IllegalArgumentException e) {
-						continue;
-					}
+		try {
+			String line = "";
+			while ((line = countryCodeReader.readLine()) != null) { // can use double loop to avoid double try?
+				int cammaIndex = line.indexOf(",");
+				String countryCodeString = line.substring(0, cammaIndex).trim();
+				String countryName = line.substring(cammaIndex + 1).replace("\"", "").trim();
+				try {
+					countryCodeMap.put(CountryCode.valueOf(countryCodeString), countryName);
+				} catch (IllegalArgumentException e) {
+					continue;
 				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return countryCodeMap;
 	}

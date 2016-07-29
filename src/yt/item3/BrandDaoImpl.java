@@ -18,9 +18,10 @@ public class BrandDaoImpl implements BrandDao {
 	}
 
 	@Override
-	public boolean selectBrandByID(Brand brand) throws SQLException {
+	public Brand selectBrandByID(int brandId) throws SQLException {
 		String query = "SELECT * FROM brands WHERE BrandId= ?";
-
+		Brand brand = new Brand(brandId);
+		
 		PreparedStatement preparedStatement = conn.prepareStatement(query);
 		preparedStatement.setInt(1, brand.getBrandId());
 
@@ -30,9 +31,9 @@ public class BrandDaoImpl implements BrandDao {
 			brand.setBrandName(resultSet.getString("brandName")).setCountry(resultSet.getString("country")).setWebsite(resultSet.getString("website"));
 			resultSet.close();
 			preparedStatement.close();
-			return true;
+			return brand;
 		}
-		return false;
+		return null;
 	}
 
 	@Override
