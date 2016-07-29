@@ -27,68 +27,12 @@ public class BrandDaoImpl implements BrandDao {
 		ResultSet resultSet = preparedStatement.executeQuery();
 
 		if (resultSet.next()) {	//set is not empty 
-			brand.setBrandName(resultSet.getString("BrandName"));
-			brand.setWebsite(resultSet.getString("Website"));
-			brand.setCountry(resultSet.getString("Country"));
+			brand.setBrandName(resultSet.getString("brandName")).setCountry(resultSet.getString("country")).setWebsite(resultSet.getString("website"));
 			resultSet.close();
 			preparedStatement.close();
 			return true;
 		}
-
 		return false;
-
-	}
-
-	@Override
-	public boolean deleteBrand(int brandId) {
-		int updateStatus = 0;
-		try {
-			String sqlStatement = "DELETE FROM brands WHERE BrandId=?";
-
-			PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
-			preparedStatement.setInt(1, brandId);
-			updateStatus = preparedStatement.executeUpdate();
-			preparedStatement.close();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return isUpdate(updateStatus);
-	}
-
-	@Override
-	public boolean updateBrand(Brand brand) throws SQLException {
-		String sqlStatement = "UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandId=?";
-		PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
-
-		preparedStatement.setString(1, brand.getBrandName());
-		preparedStatement.setString(2, brand.getWebsite());
-		preparedStatement.setString(3, brand.getCountry());
-		preparedStatement.setInt(4, brand.getBrandId());
-		int updateStatus = preparedStatement.executeUpdate();
-		preparedStatement.close();
-
-		return isUpdate(updateStatus);
-	}
-
-	private boolean isUpdate(int updateStatus) {
-		if (updateStatus == 0) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean insertBrand(Brand brand) throws SQLException {
-		String sqlStatement = "INSERT brands (BrandName, Website, Country) VALUES (?,?,?)";
-
-		PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
-		preparedStatement.setString(1, brand.getBrandName());
-		preparedStatement.setString(2, brand.getWebsite());
-		preparedStatement.setString(3, brand.getCountry());
-		int updateStatus = preparedStatement.executeUpdate();
-		preparedStatement.close();
-		return isUpdate(updateStatus);
 	}
 
 	@Override
@@ -114,4 +58,43 @@ public class BrandDaoImpl implements BrandDao {
 
 	}
 
+	@Override
+	public boolean deleteBrand(int brandId) throws SQLException {
+
+		String[] elements = { String.valueOf(brandId) };
+		return executeStatement("DELETE FROM brands WHERE BrandId=?", elements);
+
+	}
+
+	@Override
+	public boolean updateBrand(Brand brand) throws SQLException {
+
+		String[] elements = { brand.getBrandName(), brand.getWebsite(), brand.getCountry(), String.valueOf(brand.getBrandId()) };
+		return executeStatement("UPDATE brands SET BrandName=?, Website=?, Country=? WHERE BrandId=?", elements);
+	}
+
+	@Override
+	public boolean insertBrand(Brand brand) throws SQLException {
+		String[] elements = { brand.getBrandName(), brand.getWebsite(), brand.getCountry() };
+		return executeStatement("INSERT brands (BrandName, Website, Country) VALUES (?,?,?)", elements);
+
+	}
+
+	private boolean executeStatement(String sqlStatement, String[] dbData) throws SQLException {
+		PreparedStatement preparedStatement = conn.prepareStatement(sqlStatement);
+		for (int i = 1; i <= dbData.length; i++) {
+			preparedStatement.setString(i, dbData[i - 1]);
+		}
+		int updateStatus = preparedStatement.executeUpdate();
+
+		preparedStatement.close();
+		return isUpdateSucceed(updateStatus);
+	}
+
+	private boolean isUpdateSucceed(int updateStatus) {
+		if (updateStatus == 0) {
+			return false;
+		}
+		return true;
+	}
 }

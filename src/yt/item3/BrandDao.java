@@ -9,7 +9,7 @@ public interface BrandDao {
 
 	public boolean selectBrandByID(Brand brand) throws SQLException;
 
-	public boolean deleteBrand(int brandId);
+	public boolean deleteBrand(int brandId) throws SQLException;
 
 	public boolean updateBrand(Brand brand) throws SQLException;
 

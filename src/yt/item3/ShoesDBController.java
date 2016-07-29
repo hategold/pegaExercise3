@@ -75,7 +75,6 @@ public class ShoesDBController extends HttpServlet {
 	}
 
 	private boolean isCreate(String id) {
-
 		try {
 			Integer.valueOf(id);
 		} catch (NumberFormatException e) {
@@ -98,7 +97,6 @@ public class ShoesDBController extends HttpServlet {
 
 			brand.setBrandId(Integer.valueOf(request.getParameter("brandId"))).setCountry(request.getParameter("brandName"))
 					.setWebsite(request.getParameter("website"));
-			System.out.println(brand.toString());
 			brandDao.updateBrand(brand);
 			response.sendRedirect("/webExercise3/ShoesDBController?action=list");
 
