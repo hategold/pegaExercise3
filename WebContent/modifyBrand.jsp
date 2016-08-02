@@ -42,7 +42,9 @@
 						<div class="form-group">
 							<label>Country</label><select class="form-control" name="country">
 								<c:forEach items="${countryCodeMap}" var="countryCode">
-									<option value=${countryCode.key}>${countryCode.value}</option>
+									<option value=${countryCode.key
+										}
+										${countryCode.key == brand.getCountry()?"selected":""}>${countryCode.value}</option>
 								</c:forEach>
 							</select>
 						</div>
