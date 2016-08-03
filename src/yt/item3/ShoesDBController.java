@@ -64,7 +64,7 @@ public class ShoesDBController extends HttpServlet {
 				return dispatchToList(request);
 			}
 			if (ActionEnum.EDIT.name().equalsIgnoreCase(action)) {
-				Brand brand = brandDao.selectBrandByID(Integer.valueOf(request.getParameter("brandId")));
+				Brand brand = brandDao.selectBrandById(Integer.valueOf(request.getParameter("brandId")));
 				if (brand == null) //got no data
 					return dispatchToList(request);
 				request.setAttribute("brand", brand);

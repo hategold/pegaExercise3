@@ -18,7 +18,7 @@ public class BrandDaoImpl implements BrandDao {
 	}
 
 	@Override
-	public Brand selectBrandByID(int brandId) throws SQLException {
+	public Brand selectBrandById(int brandId) throws SQLException {
 		String query = "SELECT * FROM brands WHERE BrandId= ?";
 		Brand brand = new Brand(brandId);
 
