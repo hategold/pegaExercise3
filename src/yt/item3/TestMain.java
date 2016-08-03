@@ -22,15 +22,15 @@ public class TestMain {
 				System.out.printf("%-8s ", metaData.getColumnName(i));
 				System.out.println();
 			}
-			
-			while(resultSet.next()){
-				for (int i = 1; i <= numOfColumns; i++){
+
+			while (resultSet.next()) {
+				for (int i = 1; i <= numOfColumns; i++) {
 					System.out.printf("%-8s ", resultSet.getObject(i));
 					System.out.println();
 				}
 			}
 		} catch (SQLException e) {
-			
+
 			e.printStackTrace();
 		}
 	}

@@ -21,7 +21,7 @@ public class BrandDaoImpl implements BrandDao {
 	public Brand selectBrandByID(int brandId) throws SQLException {
 		String query = "SELECT * FROM brands WHERE BrandId= ?";
 		Brand brand = new Brand(brandId);
-		
+
 		PreparedStatement preparedStatement = conn.prepareStatement(query);
 		preparedStatement.setInt(1, brand.getBrandId());
 
