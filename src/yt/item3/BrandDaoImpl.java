@@ -93,9 +93,6 @@ public class BrandDaoImpl implements BrandDao {
 	}
 
 	private boolean isUpdateSucceed(int updateStatus) {
-		if (updateStatus == 0) {
-			return false;
-		}
-		return true;
+		return updateStatus != 0;
 	}
 }

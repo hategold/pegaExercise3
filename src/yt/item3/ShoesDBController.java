@@ -55,10 +55,10 @@ public class ShoesDBController extends HttpServlet {
 		return INSERT_OR_EDIT;
 	}
 
-	private String excuteAction(String action, HttpServletRequest request) {
+	private String excuteAction(String action, HttpServletRequest request) { // enum action in
 
 		try {
-			if (ActionEnum.DELETE.name().equalsIgnoreCase(action)) {
+			if (ActionEnum.DELETE.name().equalsIgnoreCase(action)) { // switch case
 
 				brandDao.deleteBrand(Integer.valueOf(request.getParameter("brandId")));
 				return dispatchToList(request);
